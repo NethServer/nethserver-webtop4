@@ -78,6 +78,7 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 /usr/share/tomcat/lib/postgresql-jdbc.jar
 /etc/sudoers.d/webtop
 /etc/nethserver/todos.d/70webtop
+/usr/share/nethesis/NethServer/Module/Dashboard/Applications/WebTop.php
 %doc COPYING
 
 %changelog
