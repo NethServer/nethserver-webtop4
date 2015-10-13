@@ -82,9 +82,3 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc COPYING
 
 %changelog
-* Mon Jul 06 2015 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.1-1
-- First public release: WebTop 4 groupware - Feature #3184 [NethServer]
-
-* Mon May 25 2015 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.0.0-1
-- WebtTop 4 groupware - Feature #3184 [NethServer]
-
