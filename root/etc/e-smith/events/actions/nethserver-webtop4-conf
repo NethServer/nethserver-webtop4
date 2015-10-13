@@ -1,0 +1,39 @@
+#!/bin/bash
+
+su - postgres -c "psql -lqt | cut -d \| -f 1 | grep -q -w webtop"
+if [ $? -eq 1 ]; then # database do not exists
+
+    # create db and users
+    tmp_sql=`mktemp`
+    chmod a+r $tmp_sql
+    password=`perl -e "use NethServer::Password; print NethServer::Password::store('webtop');"`
+cat << EOF > $tmp_sql
+CREATE database webtop;
+CREATE USER sonicle WITH PASSWORD '$password';
+ALTER USER sonicle WITH SUPERUSER;
+GRANT ALL PRIVILEGES ON DATABASE webtop to sonicle;
+EOF
+    su - postgres  -c "psql < $tmp_sql" >/dev/null
+    rm -f $tmp_sql
+
+    # initialize db
+    su - postgres  -c "psql webtop < /usr/share/webtop/webtop.sql" >/dev/null
+
+    # fix table owner
+    tmp_sql=`mktemp`
+    chmod a+r $tmp_sql
+    for tbl in `su - postgres  -c "psql -qAt -c \"select tablename from pg_tables where schemaname = 'public';\" webtop"` \
+               `su - postgres  -c "psql -qAt -c \"select sequence_name from information_schema.sequences where sequence_schema = 'public';\" webtop"` \
+               `su - postgres  -c "psql -qAt -c \"select table_name from information_schema.views where table_schema = 'public';\" webtop"` ;
+    do
+        echo "alter table \"$tbl\" owner to sonicle;" >> $tmp_sql
+    done
+    su - postgres  -c "psql webtop < $tmp_sql" >/dev/null
+    rm -f $tmp_sql
+fi
+
+# Enable file upload/download
+setfacl -R -d -m postgres:rwx /var/lib/nethserver/webtop/tmp/
+
+perl -e "use NethServer::Directory qw(FIELDS_READ); my \$ldap = NethServer::Directory->new() || die('Could not connect LDAP server'); \$ldap->configServiceAccount('webtop', FIELDS_READ) || die('Error creating webtop LDAP service account');";
+

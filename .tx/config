@@ -1,0 +1,9 @@
+[main]
+host = https://www.transifex.com
+
+[nethserver.nethserver-webtop4pot]
+source_file = locale/nethserver-webtop4.pot
+source_lang = en
+type = PO
+
+

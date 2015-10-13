@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+
+use DBI;
+use NethServer::Password;
+use Locale::TextDomain ('nethserver-webtop4');
+use POSIX;
+use JSON;
+use esmith::ConfigDB;
+setlocale( LC_MESSAGES, '' );
+
+my $cdb = esmith::ConfigDB->open_ro();
+my $domain = $cdb->get_value('DomainName');
+my $host = $cdb->get_value('SystemName');
+my $FQDN = $host.".".$domain;
+
+my $dbh = DBI->connect('dbi:Pg:dbname=webtop','sonicle',NethServer::Password::store('webtop'),{AutoCommit=>1,RaiseError=>1,PrintError=>0});
+my $pass = $dbh->selectrow_array("SELECT password from users where login='admin' and iddomain!='NethServer'"); # return first field of first row
+
+if ($pass eq  'admin') {
+    my %res = (
+        "text" => __('Please access WebTop to change password for the admin user. Default password is: "admin"'),
+        "icon" => "warning"
+    );
+    print encode_json(\%res);
+}
+

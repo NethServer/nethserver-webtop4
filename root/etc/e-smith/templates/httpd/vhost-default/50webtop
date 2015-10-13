@@ -1,0 +1,27 @@
+{
+    if ($Port == 80 || ! defined $SslMode) {
+
+        $OUT .= "RewriteEngine On\n";
+        $OUT .= "RewriteCond %{HTTPS} !=on\n";
+        $OUT .= "RewriteRule ^/webtop(/.*|\$) https://%{SERVER_NAME}/webtop\$1 [R,L]\n";
+    } else { 
+
+        $ac = $webtop{'ActiveSync'} || 'disabled';
+        if ($ac eq 'enabled') {
+            $OUT .= "Alias /Microsoft-Server-ActiveSync /usr/share/webtop/z-push/index.php\n";
+        }
+    }
+
+    $ports = $tomcat{'TCPPorts'} || '8080';
+    @ports = split(/,/,$ports);
+    $port = $ports[0];
+    $OUT .= "ProxyPass /webtop http://localhost:$port/webtop\n";
+    $OUT .= "ProxyPassReverse /webtop http://localhost:$port/webtop\n";
+
+}
+<Directory "/usr/share/webtop/z-push/">
+    AllowOverride None
+    Options None
+    Order allow,deny
+    Allow from all
+</Directory>

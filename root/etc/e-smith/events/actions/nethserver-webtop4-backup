@@ -1,0 +1,3 @@
+#!/bin/bash
+
+su - postgres -c "pg_dump webtop > /var/lib/nethserver/webtop/backup/webtop.sql"

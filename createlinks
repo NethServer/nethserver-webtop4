@@ -1,0 +1,77 @@
+#!/usr/bin/perl
+
+#
+# Copyright (C) 2013 Nethesis S.r.l.
+# http://www.nethesis.it - support@nethesis.it
+# 
+# This script is part of NethServer.
+# 
+# NethServer is free software: you can webtoptribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+# 
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+use strict;
+use esmith::Build::CreateLinks  qw(:all);
+
+safe_symlink("/usr/bin/sudo", "root/usr/share/webtop/bin/php");
+
+#--------------------------------------------------
+# actions for nethserver-webtop4-update event
+#--------------------------------------------------
+
+my $event = "nethserver-webtop4-update";
+
+event_actions($event, 
+                     'initialize-default-databases' => '00',
+                     'nethserver-webtop4-conf' => '20',
+                     'nethserver-webtop4-domain' => '40'
+);
+event_templates($event, 
+                     '/var/lib/tomcat/webapps/webtop/META-INF/context.xml',
+                     '/etc/dovecot/dovecot.conf',
+                     '/usr/share/webtop/z-push/config.php',
+                     '/etc/httpd/conf/httpd.conf'
+);
+event_services($event, 
+                     'tomcat' => 'restart',
+                     'dovecot' => 'restart',
+                     'httpd' => 'reload',
+);
+
+
+#--------------------------------------------------
+# actions for pre-backup-data event
+#--------------------------------------------------
+
+$event = 'pre-backup-data';
+
+event_actions($event, 'nethserver-webtop4-backup' => 50);
+
+#--------------------------------------------------
+# actions for post-restore-data event
+#--------------------------------------------------
+
+$event = 'post-restore-data';
+
+event_actions($event, 'nethserver-webtop4-restore' => 50);
+
+event_services($event, 'tomcat' => 'restart');
+
+#--------------------------------------------------
+# actions for user-delete-event
+#--------------------------------------------------
+
+$event = 'user-delete';
+
+event_actions($event, 'nethserver-webtop4-delete' => 70);
+

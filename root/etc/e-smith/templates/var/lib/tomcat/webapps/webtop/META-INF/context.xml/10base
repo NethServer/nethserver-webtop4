@@ -1,0 +1,8 @@
+{
+    use NethServer::Password;
+    our $password = NethServer::Password::store('webtop');
+    '';
+}<?xml version="1.0" encoding="UTF-8"?>
+<Context useHttpOnly="false">
+  <Resource auth="Container" driverClassName="org.postgresql.Driver" maxActive="20" maxIdle="10" maxWait="-1" name="jdbc/webtop2" password="{{$password}}" type="javax.sql.DataSource" url="jdbc:postgresql://localhost:5432/webtop" username="sonicle" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" initialSize="0" removeAbandonedTimeout="60" removeAbandoned="true" logAbandoned="true" defaultAutoCommit="true" jdbcInterceptors="org.apache.tomcat.jdbc.pool.interceptor.ConnectionState"/>
+</Context>

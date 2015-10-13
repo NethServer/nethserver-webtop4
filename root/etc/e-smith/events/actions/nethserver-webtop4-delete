@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# Delete user data from WebTop database
+#
+
+event=$1
+user=$2
+
+tmp_sql=`mktemp`
+chmod a+r $tmp_sql
+cat << EOF > $tmp_sql
+SELECT webtop_deleteuser('$user');
+EOF
+
+su - postgres -c "psql webtop < $tmp_sql" >/dev/null
+rm -f $tmp_sql
+
+
