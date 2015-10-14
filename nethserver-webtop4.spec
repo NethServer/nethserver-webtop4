@@ -5,8 +5,8 @@ Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
 Source0: %{name}-%{version}.tar.gz
-Source1: http://git.nethesis.it/install/webtop/webtop.war
-Source2: http://git.nethesis.it/install/webtop/z-push.tar.gz
+Source1: http://git.nethesis.it/install/webtop/webtop-%{version}.war
+Source2: http://git.nethesis.it/install/webtop/z-push-%{version}.tar.gz
 Source3: WebtopPassEncode.java
 BuildArch: noarch
 AutoReq: no
