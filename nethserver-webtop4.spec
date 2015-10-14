@@ -1,6 +1,6 @@
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.0.1
+Version: 1.1.0
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -82,3 +82,6 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc COPYING
 
 %changelog
+* Wed Oct 14 2015 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.0-1
+- WebTop 4 groupware - Feature #3184 [NethServer]
+
