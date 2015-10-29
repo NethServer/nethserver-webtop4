@@ -1,11 +1,13 @@
+%define webtop_version 0334
+
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
 Version: 1.1.0
-Release: 1%{?dist}
+Release: %{webtop_version}.1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
 Source0: %{name}-%{version}.tar.gz
-Source1: http://git.nethesis.it/install/webtop/webtop-%{version}.war
+Source1: http://git.nethesis.it/install/webtop/webtop%23%23%{webtop_version}.war
 Source2: http://git.nethesis.it/install/webtop/z-push-%{version}.tar.gz
 Source3: WebtopPassEncode.java
 BuildArch: noarch
