@@ -1,0 +1,141 @@
+<configuration scan="true">
+	
+	<!-- Remember to change directory separator depending on system type: \\ for Win, / for Unix -->
+	<property scope="context" name="LOGS_HOME" value="/var/lib/nethserver/webtop/logs"/>
+	
+	<!--
+	<turboFilter class="ch.qos.logback.classic.turbo.MDCFilter">
+		<MDCKey>username</MDCKey>
+		<value>matteooo</value>
+		<OnMatch>ACCEPT</OnMatch>
+	</turboFilter>
+	-->
+	<!--
+	<turboFilter class="ch.qos.logback.classic.turbo.DynamicThresholdFilter">
+		<Key>username</Key>
+		<DefaultThreshold>ERROR</DefaultThreshold>
+		<MDCValueLevelPair>
+			<value>matteo</value>
+			<level>DEBUG</level>
+		</MDCValueLevelPair>
+	</turboFilter>
+	-->
+	
+	<!-- Default appender | CONSOLE -->
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d\{HH:mm:ss.SSS\} [%thread] %-5level %logger\{36\} - %msg%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- WT common appender | CONSOLE -->
+	<appender name="wt-console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date\{yyyy-MM-dd HH:mm:ss\} [%-5level] %logger\{36\} %X\{servuser\} - %replace(%msg)\{'\s+$',''\}%n</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- WT common appender | SIFT FILE (by split) -->
+	<appender name="wt-sift-file" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator class="ch.qos.logback.classic.sift.MDCBasedDiscriminator">
+			<key>split</key>
+			<defaultValue>unknown-service</defaultValue>
+		</discriminator>
+		<sift>
+			<appender name="wt-sift-file-$\{split\}" class="ch.qos.logback.core.FileAppender">
+				<file>$\{LOGS_HOME\}/$\{split\}.log</file>
+				<encoder>
+					<pattern>%date\{yyyy-MM-dd HH:mm:ss\} [%-5level] %logger\{36\} - %replace(%msg)\{'\s+$',''\}%n</pattern>
+				</encoder>
+			</appender>
+		</sift>
+	</appender>
+	
+	<!-- WT common appender | SIFT ROLLING FILE (by split) -->
+	<appender name="wt-sift-file-rolling" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<discriminator class="ch.qos.logback.classic.sift.MDCBasedDiscriminator">
+			<key>split</key>
+			<defaultValue>unknown-service</defaultValue>
+		</discriminator>
+		<sift>
+			<appender name="wt-sift-file-rolling-$\{split\}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<file>$\{LOGS_HOME\}/$\{split\}.log</file>
+				<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+					<FileNamePattern>$\{split\}.%i.log</FileNamePattern>
+					<MinIndex>1</MinIndex>
+					<MaxIndex>1</MaxIndex>
+				</rollingPolicy>
+				<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+					<MaxFileSize>2MB</MaxFileSize>
+				</triggeringPolicy>
+				<encoder>
+					<pattern>%date\{yyyy-MM-dd HH:mm:ss\} [%-5level] %logger\{36\} - %replace(%msg)\{'\s+$',''\}%n</pattern>
+				</encoder>
+			</appender>
+		</sift>
+	</appender>
+
+
+	<!-- Specific | ROLLING FILE -->
+	<appender name="fashionpdm-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>$\{LOGS_HOME\}/fashionpdm.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>fashionpdm.%i.log</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>2</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>2MB</MaxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<pattern>%date\{yyyy-MM-dd HH:mm:ss\} [%-5level] %logger\{36\} - %replace(%msg)\{'\s+$',''\}%n</pattern>
+		</encoder>
+	</appender>
+	<appender name="aliseoadmin-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>$\{LOGS_HOME\}/aliseoadmin.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<FileNamePattern>aliseoadmin.%i.log</FileNamePattern>
+			<MinIndex>1</MinIndex>
+			<MaxIndex>2</MaxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>2MB</MaxFileSize>
+		</triggeringPolicy>
+		<encoder>
+			<pattern>%date\{yyyy-MM-dd HH:mm:ss\} [%-5level] %logger\{36\} - %replace(%msg)\{'\s+$',''\}%n</pattern>
+		</encoder>
+	</appender>
+	
+	<root level="DEBUG">
+		<!-- Keep commented, otherwise each log entry will be doubled! -->
+		<!--<appender-ref ref="stdout" />-->
+	</root>
+	<logger name="ch.qos.logback" level="OFF">
+		<appender-ref ref="console" />
+	</logger>
+	<logger name="org.pentaho" level="OFF">
+		<appender-ref ref="console" />
+	</logger>
+        
+	
+	<logger name="wt.app" level="OFF">
+		<appender-ref ref="wt-sift-file" />
+	</logger>
+	<logger name="wt.service" level="OFF">
+		<appender-ref ref="wt-sift-file" />
+	</logger>
+	<logger name="wt.service.newsletter" level="OFF">
+		<appender-ref ref="wt-sift-file" />
+	</logger>
+	<logger name="wt.service.mail" level="INFO">
+		<appender-ref ref="wt-sift-file" />
+	</logger>
+	
+	<logger name="com.sonicle.webtop.shiro" level="OFF">
+		<appender-ref ref="wt-console" />
+	</logger>
+	<logger name="org.apache.shiro" level="OFF">
+		<appender-ref ref="wt-console" />
+	</logger>
+
+</configuration>

@@ -38,6 +38,7 @@ event_actions($event,
 );
 event_templates($event, 
                      '/var/lib/tomcat/webapps/webtop/META-INF/context.xml',
+                     '/var/lib/tomcat/webapps/webtop/WEB-INF/classes/logback.xml',
                      '/etc/dovecot/dovecot.conf',
                      '/usr/share/webtop/z-push/config.php',
                      '/etc/httpd/conf/httpd.conf'
