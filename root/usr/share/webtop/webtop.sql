@@ -2809,7 +2809,7 @@ INSERT INTO settings VALUES ('main.config.domains.management', 'false');
 INSERT INTO settings VALUES ('main.config.postmap.management', 'false');
 INSERT INTO settings VALUES ('main.config.pecbridge.management', 'false');
 INSERT INTO settings VALUES ('main.config.fetchmail.management', 'false');
-
+INSERT INTO settings VALUES ('webtop.sql','/usr/share/webtop/updates/post');
 
 INSERT INTO users VALUES ('admin', 'admin', 'Administrator', '', NULL, NULL, 'EN', 'en', 0, now(), 'admin', 'address', 'zip', 'city', 'ST', '', '', NULL, NULL, NULL, NULL, 'U', 0, NULL, '', NULL, NULL, NULL, NULL, NULL, 'PLAIN', NULL, NULL, NULL, NULL, NULL, 'Y', 'w5', '1', NULL, NULL, NULL, 'Y', NULL, 'N', 30, 10, '', 'N', 'N', 'F', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
  INSERT INTO users VALUES ('admin', '', 'NethServer Administrator', '', NULL, NULL, 'EN', 'en', 1, now(), 'admin', 'address', 'zip', 'city', 'ST', '', '', NULL, NULL, NULL, NULL, 'U', 0, NULL, '', NULL, NULL, NULL, NULL, NULL, 'PLAIN', NULL, NULL, NULL, NULL, NULL, 'N', 'w5', '1', NULL, NULL, NULL, 'Y', NULL, 'N', 30, 10, 'NethServer', 'N', 'N', 'F', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);

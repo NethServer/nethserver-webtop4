@@ -1,4 +1,4 @@
-%define webtop_version 0334
+%define webtop_version 0341
 
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
