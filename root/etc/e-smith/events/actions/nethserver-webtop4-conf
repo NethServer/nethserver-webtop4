@@ -30,6 +30,11 @@ EOF
     done
     su - postgres  -c "psql webtop < $tmp_sql" >/dev/null
     rm -f $tmp_sql
+else
+    for sql in `find /usr/share/webtop/updates/pre -name \*.sql`
+    do
+        su - postgres -c "psql webtop < $sql" >/dev/null
+    done
 fi
 
 # Enable file upload/download
