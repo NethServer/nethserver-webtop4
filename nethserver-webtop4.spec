@@ -82,6 +82,7 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 /etc/sudoers.d/webtop
 /etc/nethserver/todos.d/70webtop
 /usr/share/nethesis/NethServer/Module/Dashboard/Applications/WebTop.php
+/etc/backup-data.d/nethserver-webtop4.exclude
 %doc COPYING
 
 %changelog

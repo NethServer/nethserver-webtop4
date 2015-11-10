@@ -3,24 +3,6 @@
 	<!-- Remember to change directory separator depending on system type: \\ for Win, / for Unix -->
 	<property scope="context" name="LOGS_HOME" value="/var/lib/nethserver/webtop/logs"/>
 	
-	<!--
-	<turboFilter class="ch.qos.logback.classic.turbo.MDCFilter">
-		<MDCKey>username</MDCKey>
-		<value>matteooo</value>
-		<OnMatch>ACCEPT</OnMatch>
-	</turboFilter>
-	-->
-	<!--
-	<turboFilter class="ch.qos.logback.classic.turbo.DynamicThresholdFilter">
-		<Key>username</Key>
-		<DefaultThreshold>ERROR</DefaultThreshold>
-		<MDCValueLevelPair>
-			<value>matteo</value>
-			<level>DEBUG</level>
-		</MDCValueLevelPair>
-	</turboFilter>
-	-->
-	
 	<!-- Default appender | CONSOLE -->
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
