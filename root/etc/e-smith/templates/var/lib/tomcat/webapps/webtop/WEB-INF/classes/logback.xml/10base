@@ -58,36 +58,6 @@
 	</appender>
 
 
-	<!-- Specific | ROLLING FILE -->
-	<appender name="fashionpdm-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>$\{LOGS_HOME\}/fashionpdm.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<FileNamePattern>fashionpdm.%i.log</FileNamePattern>
-			<MinIndex>1</MinIndex>
-			<MaxIndex>2</MaxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<MaxFileSize>2MB</MaxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>%date\{yyyy-MM-dd HH:mm:ss\} [%-5level] %logger\{36\} - %replace(%msg)\{'\s+$',''\}%n</pattern>
-		</encoder>
-	</appender>
-	<appender name="aliseoadmin-file" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>$\{LOGS_HOME\}/aliseoadmin.log</file>
-		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-			<FileNamePattern>aliseoadmin.%i.log</FileNamePattern>
-			<MinIndex>1</MinIndex>
-			<MaxIndex>2</MaxIndex>
-		</rollingPolicy>
-		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<MaxFileSize>2MB</MaxFileSize>
-		</triggeringPolicy>
-		<encoder>
-			<pattern>%date\{yyyy-MM-dd HH:mm:ss\} [%-5level] %logger\{36\} - %replace(%msg)\{'\s+$',''\}%n</pattern>
-		</encoder>
-	</appender>
-	
 	<root level="DEBUG">
 		<!-- Keep commented, otherwise each log entry will be doubled! -->
 		<!--<appender-ref ref="stdout" />-->
