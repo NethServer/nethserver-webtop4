@@ -2,8 +2,8 @@
 
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.1.0
-Release: %{webtop_version}.1%{?dist}
+Version: 1.1.1
+Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
 Source0: %{name}-%{version}.tar.gz
@@ -43,6 +43,7 @@ tar xvzf %{SOURCE2} -C root/usr/share/webtop
 cp %{SOURCE3} root/usr/share/webtop
 javac root/usr/share/webtop/WebtopPassEncode.java
 rm -f root/usr/share/webtop/WebtopPassEncode.java
+echo %{webtop_version} > root/usr/share/webtop/doc/VERSION
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -86,6 +87,11 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc COPYING
 
 %changelog
+* Mon Nov 16 2015 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.1-1
+- WebTop: upgrade to upstream release 0341 - Bug #3313 [NethServer]
+- WebTop: images upload doesn't work from admin section - Bug #3297 [NethServer]
+- WebTop: upgrade to up 0334 - Bug #3296 [NethServer]
+
 * Wed Oct 14 2015 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.0-1
 - WebTop 4 groupware - Feature #3184 [NethServer]
 
