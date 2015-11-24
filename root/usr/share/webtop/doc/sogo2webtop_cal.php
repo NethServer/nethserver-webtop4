@@ -87,11 +87,12 @@ foreach($tables as $table)
 {
 	if(DEBUG)	
 	  echo " ==== $user -> $table ===\n";
-	$query="SELECT c_content FROM $table WHERE c_deleted IS NULL limit 100";
+	$query="SELECT c_content FROM $table WHERE c_deleted IS NULL ";
 	$res2 = mysql_query($query,$link);
 	while($row = mysql_fetch_row($res2)) {
 		unset($arrayEvent);
-		$ics = explode("\n", $row[0]); //ICal vuole come parametro un array di righe o un file
+		$sogocal=iconv(mb_detect_encoding($row[0], mb_detect_order(), true), "UTF8", $row[0]); //converto in UTF8
+		$ics = explode("\n", $sogocal); //ICal vuole come parametro un array di righe o un file
 		$ical   = new ICal($ics);
 		$events = $ical->events();
 		$event = $events[0]; //passo eventi singoli

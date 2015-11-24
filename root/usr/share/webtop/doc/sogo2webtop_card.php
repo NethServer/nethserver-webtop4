@@ -84,16 +84,16 @@ foreach($tables as $table)
 {
 	if(DEBUG)	
 	  echo " ==== $user -> $table ===\n";
-	$query="SELECT c_content FROM $table WHERE c_deleted IS NULL limit 100";
+	$query="SELECT c_content FROM $table WHERE c_deleted IS NULL ";
 	$res2 = mysql_query($query,$link);
 	while($row = mysql_fetch_row($res2)) {
 		unset($arrayContact);
 		$TEL= array();
 		$ADR= array();
 		$EMAIL= array();
-		$cards[] = $row[0];
+                $sogocard=iconv(mb_detect_encoding($row[0], mb_detect_order(), true), "UTF8", $row[0]); //converto in UTF8
 		$card = new Contact_Vcard_Parse();
-		$data = $card->fromText($row[0]);
+		$data = $card->fromText($sogocard);
 		$SeconN =  mysql_real_escape_string($data[0]['N'][0]['value'][0][0]);
 		$FirstN =  mysql_real_escape_string($data[0]['N'][0]['value'][1][0]);
 		$FN =  mysql_real_escape_string($data[0]['FN'][0]['value'][0][0]);
