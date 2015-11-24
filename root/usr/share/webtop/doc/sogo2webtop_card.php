@@ -91,41 +91,34 @@ foreach($tables as $table)
 		$TEL= array();
 		$ADR= array();
 		$EMAIL= array();
-                $sogocard=iconv(mb_detect_encoding($row[0], mb_detect_order(), true), "UTF8", $row[0]); //converto in UTF8
+                $sogocard=utf8_encode($row[0]); //converto in UTF8
 		$card = new Contact_Vcard_Parse();
 		$data = $card->fromText($sogocard);
-		$SeconN =  mysql_real_escape_string($data[0]['N'][0]['value'][0][0]);
-		$FirstN =  mysql_real_escape_string($data[0]['N'][0]['value'][1][0]);
-		$FN =  mysql_real_escape_string($data[0]['FN'][0]['value'][0][0]);
-		if(!$FN) //if no Full Name, use Name + Surname
-			$FN = mysql_real_escape_string($data[0]['N'][0]['value'][1][0]." ".$data[0]['N'][0]['value'][0][0]);
-		if(!$FN) //if no Name use, Nickname
-			$FN = mysql_real_escape_string($data[0]['NICKNAME'][0]['value'][0][0]);
-		if(!$FN) //else skip contact
-			continue;
+		$SeconN =  $data[0]['N'][0]['value'][0][0];
+		$FirstN =  $data[0]['N'][0]['value'][1][0];
 
-		$ORG =  mysql_real_escape_string($data[0]['ORG'][0]['value'][0][0]);
-		$TITLE =  mysql_real_escape_string($data[0]['TITLE'][0]['value'][0][0]);
+		$ORG =  $data[0]['ORG'][0]['value'][0][0];
+		$TITLE =  $data[0]['TITLE'][0]['value'][0][0];
 		$NOTE = str_replace("\\n", "\n", $data[0]['NOTE'][0]['value'][0][0]);
-		$url =  mysql_real_escape_string($data[0]['URL'][0]['value'][0][0]);
+		$url =  $data[0]['URL'][0]['value'][0][0];
 		
 		if(count($data[0]['TEL']))
 			foreach($data[0]['TEL'] as $tel)
 			{
-				$TEL[strtolower($tel['param']['TYPE'][0])] =   mysql_real_escape_string($tel['value'][0][0]);
+				$TEL[strtolower($tel['param']['TYPE'][0])] =   $tel['value'][0][0];
 			}
 		if(count($data[0]['ADR']))
 			foreach($data[0]['ADR'] as $adr)
 			{
-				$ADR[strtolower($adr['param']['TYPE'][0])]['street'] =   mysql_real_escape_string($adr['value'][2][0]);
-				$ADR[strtolower($adr['param']['TYPE'][0])]['city'] =   mysql_real_escape_string($adr['value'][3][0]);
-				$ADR[strtolower($adr['param']['TYPE'][0])]['prov'] =   mysql_real_escape_string($adr['value'][4][0]);
-				$ADR[strtolower($adr['param']['TYPE'][0])]['code'] =   mysql_real_escape_string($adr['value'][5][0]);
-				$ADR[strtolower($adr['param']['TYPE'][0])]['country'] =   mysql_real_escape_string($adr['value'][6][0]);
+				$ADR[strtolower($adr['param']['TYPE'][0])]['street'] =   $adr['value'][2][0];
+				$ADR[strtolower($adr['param']['TYPE'][0])]['city'] =   $adr['value'][3][0];
+				$ADR[strtolower($adr['param']['TYPE'][0])]['prov'] =   $adr['value'][4][0];
+				$ADR[strtolower($adr['param']['TYPE'][0])]['code'] =   $adr['value'][5][0];
+				$ADR[strtolower($adr['param']['TYPE'][0])]['country'] =   $adr['value'][6][0];
 			}
 		if(count($data[0]['EMAIL']))
 			foreach($data[0]['EMAIL'] as $em)
-				$EMAIL[strtolower($em['param']['TYPE'][0])] =   mysql_real_escape_string($em['value'][0][0]);
+				$EMAIL[strtolower($em['param']['TYPE'][0])] =   $em['value'][0][0];
 		
 		if ($EMAIL['internet'])
 		{
@@ -224,7 +217,6 @@ foreach($tables as $table)
 
 		if(DEBUG)
 		{
-			echo "\n\n== $FN == \n";
 			echo " FirstN = ".print_r($FirstN,true)."\n";
 			echo " SeconN = ".print_r($SeconN,true)."\n";
 			echo " SearchName = ".print_r($SearchName,true)."\n";

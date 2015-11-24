@@ -91,12 +91,12 @@ foreach($tables as $table)
 	$res2 = mysql_query($query,$link);
 	while($row = mysql_fetch_row($res2)) {
 		unset($arrayEvent);
-		$sogocal=iconv(mb_detect_encoding($row[0], mb_detect_order(), true), "UTF8", $row[0]); //converto in UTF8
+		$sogocal=utf8_encode($row[0]); //converto in UTF8
 		$ics = explode("\n", $sogocal); //ICal vuole come parametro un array di righe o un file
 		$ical   = new ICal($ics);
 		$events = $ical->events();
 		$event = $events[0]; //passo eventi singoli
-                $subject =  mysql_real_escape_string(@$event['SUMMARY']);
+                $subject =  @$event['SUMMARY'];
                 $dstart =  $ical->iCalDateToUnixTimestamp($event['DTSTART']);
                 $dend =  $ical->iCalDateToUnixTimestamp($event['DTEND']);
 
@@ -105,12 +105,12 @@ foreach($tables as $table)
                 $created =  @$event['CREATED'];
                 $lastmodified =  @$event['LAST-MODIFIED'];
                 $description =  @$event['DESCRIPTION'];
-                $location =  mysql_real_escape_string(@$event['LOCATION']);
-                $sequence =  mysql_real_escape_string(@$event['SEQUENCE']);
-                $status =  mysql_real_escape_string(@$event['STATUS']);
-                $transp =  mysql_real_escape_string(@$event['TRANSP']);
-                $organizer =  mysql_real_escape_string(@$event['ORGANIZER']);
-                $attendee =  mysql_real_escape_string(@$event['ATTENDEE']);
+                $location =  @$event['LOCATION'];
+                $sequence =  @$event['SEQUENCE'];
+                $status =  @$event['STATUS'];
+                $transp =  @$event['TRANSP'];
+                $organizer =  @$event['ORGANIZER'];
+                $attendee =  @$event['ATTENDEE'];
 
            	$dateTimeZone = new DateTimeZone(date_default_timezone_get());
             	$dateTime = new DateTime("now", $dateTimeZone);
