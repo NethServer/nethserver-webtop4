@@ -11,7 +11,6 @@ Source1: http://git.nethesis.it/install/webtop/webtop%23%23%{webtop_version}.war
 Source2: http://git.nethesis.it/install/webtop/z-push-%{version}.tar.gz
 Source3: WebtopPassEncode.java
 BuildArch: noarch
-AutoReq: no
 
 Requires: nethserver-mail-server, nethserver-postgresql, nethserver-tomcat, nethserver-httpd
 Requires: php-process, php-pgsql, php-imap, php-ldap, postgresql-jdbc
@@ -46,8 +45,8 @@ rm -f root/usr/share/webtop/WebtopPassEncode.java
 echo %{webtop_version} > root/usr/share/webtop/doc/VERSION
 
 %install
-rm -rf $RPM_BUILD_ROOT
-(cd root; find . -depth -print | cpio -dump $RPM_BUILD_ROOT)
+rm -rf %{buildroot}
+(cd root; find . -depth -print | cpio -dump %{buildroot})
 ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/postgresql-jdbc.jar
 
 %post
@@ -61,6 +60,7 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %attr(755, apache, apache) /var/log/z-push
 %attr(755, apache, apache) /var/lib/nethserver/z-push
 %attr(777, tomcat, tomcat) /var/lib/nethserver/webtop/tmp
+%dir %{_nseventsdir}/%{name}-update
 /var/lib/tomcat/webapps/webtop
 /usr/share/webtop
 /etc/e-smith/events/nethserver-webtop4-update
