@@ -35,13 +35,13 @@ mkdir -p root/var/lib/tomcat/webapps/webtop
 mkdir -p root/var/www/html
 mkdir -p root/var/log/z-push
 mkdir -p root/var/lib/nethserver/z-push/state
-mkdir -p root/usr/share/webtop
+mkdir -p root/usr/share/webtop/z-push/
 mkdir -p root/usr/share/tomcat/lib
 mkdir -p root/var/lib/nethserver/webtop/backup
 mkdir -p root/var/lib/nethserver/webtop/public/main/images
 mkdir -p root/usr/share/webtop/bin/
 unzip %{SOURCE1} -d root/var/lib/tomcat/webapps/webtop
-tar xvzf %{SOURCE2} -C root/usr/share/webtop
+tar xvzf %{SOURCE2} -C root/usr/share/webtop/z-push
 cp %{SOURCE3} root/usr/share/webtop
 javac root/usr/share/webtop/WebtopPassEncode.java
 rm -f root/usr/share/webtop/WebtopPassEncode.java
