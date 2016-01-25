@@ -4,7 +4,7 @@
 
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.1.1
+Version: 1.1.2
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -89,6 +89,10 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc COPYING
 
 %changelog
+* Mon Jan 25 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.2-1
+- WebTop: upgrade to upstream release 0352 - Enhancement #3338 [NethServer]
+- WebTop: Outlook PST import - Enhancement #3337 [NethServer]
+
 * Mon Nov 16 2015 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.1-1
 - WebTop: upgrade to upstream release 0341 - Bug #3313 [NethServer]
 - WebTop: images upload doesn't work from admin section - Bug #3297 [NethServer]
