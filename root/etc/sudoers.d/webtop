@@ -1,2 +1,4 @@
+Defaults:tomcat !requiretty
+
 tomcat ALL=NOPASSWD: /usr/share/webtop/z-push/z-push-admin.php
 

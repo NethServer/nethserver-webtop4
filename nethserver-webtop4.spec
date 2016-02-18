@@ -63,6 +63,7 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %attr(755, apache, apache) /var/log/z-push
 %attr(755, apache, apache) /var/lib/nethserver/z-push
 %attr(777, tomcat, tomcat) /var/lib/nethserver/webtop/tmp
+%attr(755, root, root) //usr/share/webtop/z-push/z-push-admin.php
 /var/lib/tomcat/webapps/webtop
 /usr/share/webtop
 /etc/e-smith/events/nethserver-webtop4-update
