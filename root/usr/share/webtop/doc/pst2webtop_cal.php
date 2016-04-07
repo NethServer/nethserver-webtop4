@@ -6,24 +6,21 @@
 define("DEBUG",false);
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
 
-#require 'class.iCalReader.php';
+$clock_config=parse_ini_file('/etc/sysconfig/clock');
+$timezone=$clock_config['ZONE'];
 
-if($argc<2)
+if($argc<4)
 	help();
 $user = $argv[1];
+$file2import = $argv[2];
+$foldername = $argv[3];
 
 if(DEBUG)
   echo "Exporting phonebook $user \n";
 
 $iddomain="NethServer";
 $newfolders=array();
-
-//get sogo db password
-exec('perl -e \'use NethServer::Directory; my $password = NethServer::Directory::getUserPassword("sogo", 0) ; printf $password;\'',$out);
-$db_pass = $out[0];
-
-$link = mysql_connect("localhost","sogo",$db_pass);
-mysql_select_db("sogo", $link);
+$num_event=0;
 
 // get webtop db password
 exec('perl -e \'use NethServer::Directory; my $password = NethServer::Directory::getUserPassword("webtop", 0) ; printf $password;\'',$out2);
@@ -31,93 +28,46 @@ $dpass2 = $out2[0];
 
 $webtop_db = pg_connect("host=localhost port=5432 dbname=webtop user=sonicle password=$dpass2");
 
-if($user == "all") //export all shared phonebooks
-{
-	$query = "select c_location,c_path2,c_foldername,c_path4 from sogo_folder_info where c_folder_type='Appointment' ";
-	$res = mysql_query($query,$link);
-	while($t = mysql_fetch_row($res))
-	{
-		$tmp = explode("/",$t[0]);
-		$tables[] = end($tmp);
-		$users[end($tmp)] = $t[1];
-		if ($t[3]=="personal")
-			$fname[end($tmp)] = "WebTop";
-		else {
-                        $newfolders[end($tmp)][$t[1]]=$t[2];
-			$fname[end($tmp)] = $t[2];
-		}
-	}
+$pgtest = pg_query($webtop_db, "SELECT * from calendars where user_calendar='$user' and calendar='$foldername';");
+$rows = pg_num_rows($pgtest);
 
-
-}
-else //export only selected phonebooks
-{
-	$query = "select c_location,c_foldername,c_path4 from sogo_folder_info where c_folder_type='Appointment' AND c_path2='$user' ";
-	$res = mysql_query($query,$link);
-	while($t = mysql_fetch_row($res))
-	{
-		$tmp = explode("/",$t[0]);
-		$tables[] = end($tmp);
-		$users[end($tmp)] = $user;
-		if ($t[2]=="personal")
-			$fname[end($tmp)] = "WebTop";
-		else {
-                        $newfolders[end($tmp)][$user]=$t[1];
-			$fname[end($tmp)] = $t[1];
-		}
-	}
+if ($rows==0) {
+	$query = "INSERT INTO calendars (user_calendar,calendar,description,color,iddomain,private,busy,sync,id,default_send_invite) values ('$user','$foldername','$foldername','#FFFFFF','$iddomain','false','true','false',nextval('seq_calendars'),'false')";
+	$result = pg_query($webtop_db, $query);
 }
 
-foreach($newfolders as $newfolder)
-        foreach ($newfolder as $login => $foldername)
-        {
-                $result = pg_query($webtop_db, "BEGIN;");
-                if ($result == FALSE)
-                        throw new Exception(pg_last_error($webtop_db));
-        	@$query = "INSERT INTO calendars (user_calendar,calendar,color,iddomain,private,busy,sync,id,default_send_invite) values ('$login','$foldername','#FFFFFF','$iddomain','false','true','false',nextval('seq_calendars'),'false')";
-               $result = pg_query($webtop_db, $query);
-               if ($result == FALSE)
-			echo "Errore Creazione Calendario $foldername di $login\n";
-                $result = pg_query($webtop_db, "COMMIT;");
-                if ($result == FALSE)
-                        throw new Exception(pg_last_error($webtop_db));
-        }
+$pgtz = pg_query($webtop_db, "SELECT value from service_settings where login='$user' and idsetting='defaulttimezone';");
+$tzrow=pg_fetch_row($pgtz);
+if ($tzrow[0] != "")
+   $timezone = $tzrow[0];
 
-foreach($tables as $table)
-{
-	if(DEBUG)	
-	  echo " ==== $user -> $table ===\n";
-	$query="SELECT c_content FROM $table WHERE c_deleted IS NULL ";
-	$res2 = mysql_query($query,$link);
-	while($row = mysql_fetch_row($res2)) {
+	$ical   = new ICal($file2import);
+	$events = $ical->events();
+	foreach($events as $event) {
 		unset($arrayEvent);
-		$sogocal=utf8_encode($row[0]); //converto in UTF8
-		$ics = explode("\n", $sogocal); //ICal vuole come parametro un array di righe o un file
-		$ical   = new ICal($ics);
-		$events = $ical->events();
-		$event = $events[0]; //passo eventi singoli
-                $subject =  @$event['SUMMARY'];
+
+                $subject =  $event['SUMMARY'];
                 $dstart =  $ical->iCalDateToUnixTimestamp($event['DTSTART']);
                 $dend =  $ical->iCalDateToUnixTimestamp($event['DTEND']);
 
-                $dstamp =  @$event['DTSTAMP'];
-                $uid =  @$event['UID'];
-                $created =  @$event['CREATED'];
-                $lastmodified =  @$event['LAST-MODIFIED'];
-                $description =  @$event['DESCRIPTION'];
-                $location =  @$event['LOCATION'];
-                $sequence =  @$event['SEQUENCE'];
-                $status =  @$event['STATUS'];
-                $transp =  @$event['TRANSP'];
-                $organizer =  @$event['ORGANIZER'];
-                $attendee =  @$event['ATTENDEE'];
+                $dstamp =  $event['DTSTAMP'];
+                $uid =  $event['UID'];
+                $created =  $event['CREATED'];
+                $lastmodified =  $event['LAST-MODIFIED'];
+                $description =  $event['DESCRIPTION'];
+                $location =  $event['LOCATION'];
+                $sequence =  $event['SEQUENCE'];
+                $status =  $event['STATUS'];
+                $transp =  $event['TRANSP'];
+                $organizer =  $event['ORGANIZER'];
+                $attendee =  $event['ATTENDEE'];
 
-           	$dateTimeZone = new DateTimeZone(date_default_timezone_get());
-            	$dateTime = new DateTime("now", $dateTimeZone);
-            	$timeOffset = $dateTimeZone->getOffset($dateTime);
             	if (isset($subject)) {
                 	$arrayEvent["event"] = truncateString(($subject), 100);
-            	}
+		} else {
+			$arrayEvent["event"] = "Void";
+		}
+			
             	if (isset($dstamp)) {
                 	$dtstamp = $dstamp;
                 	$dtstamp = gmdate("Y-m-d 00:00:00", $dtstamp);
@@ -140,50 +90,50 @@ foreach($tables as $table)
                 $arrayEvent["busy"] = $busy;
                 $arrayEvent["description"] = truncateString(str_replace("\\n", "\n", $description), 1024);
 
-		$arrayEvent['timezone'] = "Europe/Rome";
+		$arrayEvent['timezone'] = $timezone;
 
 
           	if (isset($location)) {
                 	$arrayEvent["report_id"] = truncateString(($location), 100);
             	}	
 
-           	$arrayEvent["calendar"] = $fname[$table];
+           	$arrayEvent["calendar"] = "$foldername";
 
             	$arrayEvent["revision"] = "NOW()";
-                $arrayEvent["event_by"] = $users[$table];
+                $arrayEvent["event_by"] = $user;
                 $arrayEvent["iddomain"] = $iddomain;
                 $arrayEvent["status"] = "N";
                 $id = getNextId($webtop_db,'SEQ_EVENTS');
                 $arrayEvent["event_id"] = $id;
                 $result = pg_insert($webtop_db, 'events', $arrayEvent);
+		$num_event++;
                 if ($result == FALSE)
-			echo "Errore Creazione Evento $fromtime $users[$table] - $subject su $fname[$table]\n";
+			echo "Error Creating Event $fromtime $user - $subject on $foldername\n";
 
 
 		if(DEBUG)
 		{
-			echo 'SUMMARY: ' . @$event['SUMMARY'] . "\n";
+			echo 'SUMMARY: ' . $event['SUMMARY'] . "\n";
 			echo 'DTSTART: ' . $event['DTSTART'] . ' - UNIX-Time: ' . $ical->iCalDateToUnixTimestamp($event['DTSTART']) . "\n";
 			echo 'DTEND: ' . $event['DTEND'] . "\n";
 			echo 'DTSTAMP: ' . $event['DTSTAMP'] . "\n";
-			echo 'UID: ' . @$event['UID'] . "\n";
-			echo 'CREATED: ' . @$event['CREATED'] . "\n";
-			echo 'LAST-MODIFIED: ' . @$event['LAST-MODIFIED'] . "\n";
-			echo 'DESCRIPTION: ' . @$event['DESCRIPTION'] . "\n";
-			echo 'LOCATION: ' . @$event['LOCATION'] . "\n";
-			echo 'SEQUENCE: ' . @$event['SEQUENCE'] . "\n";
-			echo 'STATUS: ' . @$event['STATUS'] . "\n";
-			echo 'TRANSP: ' . @$event['TRANSP'] . "\n";
-			echo 'ORGANIZER: ' . @$event['ORGANIZER'] . "\n";
-			echo 'ATTENDEE(S): ' . @$event['ATTENDEE'] . "\n";
+			echo 'UID: ' . $event['UID'] . "\n";
+			echo 'CREATED: ' . $event['CREATED'] . "\n";
+			echo 'LAST-MODIFIED: ' . $event['LAST-MODIFIED'] . "\n";
+			echo 'DESCRIPTION: ' . $event['DESCRIPTION'] . "\n";
+			echo 'LOCATION: ' . $event['LOCATION'] . "\n";
+			echo 'SEQUENCE: ' . $event['SEQUENCE'] . "\n";
+			echo 'STATUS: ' . $event['STATUS'] . "\n";
+			echo 'TRANSP: ' . $event['TRANSP'] . "\n";
+			echo 'ORGANIZER: ' . $event['ORGANIZER'] . "\n";
+			echo 'ATTENDEE(S): ' . $event['ATTENDEE'] . "\n";
 		}
-
 	}
-}
+	echo "Imported $num_event events on Calendar $foldername ($user)\n";
 
 function help()
 {
-	echo "Export SOGo calendars to webtop.\n\nUsage: sogo2nethtop_cal.php <user> \n\nWhere:\n\tuser: the calendar owner, or 'all' for all users.\n\tThe script will export all user's calendars.\n";
+	echo "Import PST Calendar to NethTop.\n\nUsage: pst2nethtop_cal.php <user> <file2import> <foldername (es WebTop)> [TimeZone default 'Europe/Rome']\n\n";
 	exit(0);
 }
 

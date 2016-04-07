@@ -1,14 +1,16 @@
-%define webtop_version 0341
+%define webtop_version 0352
+%define zpush_major_version 2.2.7
+%define zpush_minor_version 0015
 
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.1.1
+Version: 1.1.2
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
 Source0: %{name}-%{version}.tar.gz
 Source1: http://git.nethesis.it/install/webtop/webtop%23%23%{webtop_version}.war
-Source2: http://git.nethesis.it/install/webtop/z-push-%{version}.tar.gz
+Source2: http://git.nethesis.it/install/webtop/z-push-%{zpush_major_version}%23%23%{zpush_minor_version}.tar.gz
 Source3: WebtopPassEncode.java
 BuildArch: noarch
 
@@ -32,13 +34,13 @@ mkdir -p root/var/lib/tomcat/webapps/webtop
 mkdir -p root/var/www/html
 mkdir -p root/var/log/z-push
 mkdir -p root/var/lib/nethserver/z-push/state
-mkdir -p root/usr/share/webtop
+mkdir -p root/usr/share/webtop/z-push/
 mkdir -p root/usr/share/tomcat/lib
 mkdir -p root/var/lib/nethserver/webtop/backup
 mkdir -p root/var/lib/nethserver/webtop/public/main/images
 mkdir -p root/usr/share/webtop/bin/
 unzip %{SOURCE1} -d root/var/lib/tomcat/webapps/webtop
-tar xvzf %{SOURCE2} -C root/usr/share/webtop
+tar xvzf %{SOURCE2} -C root/usr/share/webtop/z-push
 cp %{SOURCE3} root/usr/share/webtop
 javac root/usr/share/webtop/WebtopPassEncode.java
 rm -f root/usr/share/webtop/WebtopPassEncode.java
@@ -88,6 +90,10 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc COPYING
 
 %changelog
+* Mon Jan 25 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.2-1
+- WebTop: upgrade to upstream release 0352 - Enhancement #3338 [NethServer]
+- WebTop: Outlook PST import - Enhancement #3337 [NethServer]
+
 * Mon Nov 16 2015 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.1-1
 - WebTop: upgrade to upstream release 0341 - Bug #3313 [NethServer]
 - WebTop: images upload doesn't work from admin section - Bug #3297 [NethServer]

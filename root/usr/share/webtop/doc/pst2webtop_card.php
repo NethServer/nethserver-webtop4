@@ -6,22 +6,18 @@
 define("DEBUG",false);
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
 
-if($argc<2)
+if($argc<4)
 	help();
 $user = $argv[1];
+$file2import = $argv[2];
+$foldername = $argv[3];
 
 if(DEBUG)
   echo "Exporting phonebook $user \n";
 
 $iddomain="NethServer";
 $newfolders=array();
-
-//get sogo db password
-exec('perl -e \'use NethServer::Directory; my $password = NethServer::Directory::getUserPassword("sogo", 0) ; printf $password;\'',$out);
-$db_pass = $out[0];
-
-$link = mysql_connect("localhost","sogo",$db_pass);
-mysql_select_db("sogo", $link);
+$num_contacts=0;
 
 // get webtop db password
 exec('perl -e \'use NethServer::Directory; my $password = NethServer::Directory::getUserPassword("webtop", 0) ; printf $password;\'',$out2);
@@ -29,86 +25,36 @@ $dpass2 = $out2[0];
 
 $webtop_db = pg_connect("host=localhost port=5432 dbname=webtop user=sonicle password=$dpass2");
 
-if($user == "all") //export all shared phonebooks
-{
-	$query = "select c_location,c_path2,c_foldername,c_path4 from sogo_folder_info where c_folder_type='Contact' ";
-	$res = mysql_query($query,$link);
-	while($t = mysql_fetch_row($res))
-	{
-		$tmp = explode("/",$t[0]);
-		$tables[] = end($tmp);
-		$users[end($tmp)] = $t[1];
-		if ($t[3]=="personal") {
-			$fnames[end($tmp)] = "WebTop";
-		} else {
-			$newfolders[end($tmp)][$t[1]]=$t[2];
-			$fnames[end($tmp)] = $t[2];
-		}
-	}
+$pgtest = pg_query($webtop_db, "SELECT * from contacts_category where login='$user' and category='$foldername';");
+$rows = pg_num_rows($pgtest);
 
+if ($rows==0) {
+	$query = "INSERT INTO contacts_category (login,category,iddomain,id,color) values ('$user','$foldername','$iddomain',nextval('seq_contacts_category'),'#FFFFFF')";
+	$result = pg_query($webtop_db, $query);
+}
 
-}
-else //export only selected phonebooks
-{
-	$query = "select c_location,c_foldername,c_path4 from sogo_folder_info where c_folder_type='Contact' AND c_path2='$user' ";
-	$res = mysql_query($query,$link);
-	while($t = mysql_fetch_row($res))
-	{
-		$tmp = explode("/",$t[0]);
-		$tables[] = end($tmp);
-		$users[end($tmp)] = $user;
-		if ($t[2]=="personal")
-			$fnames[end($tmp)] = "WebTop";
-		else {
-			$newfolders[end($tmp)][$user]=$t[1];
-			$fnames[end($tmp)] = $t[1];
-		}
-	}
-}
-if (!empty($newfolders))
-	foreach($newfolders as $newfolder)
-		foreach ($newfolder as $login => $foldername) 
-		{
-			$result = pg_query($webtop_db, "BEGIN;");
-	        	if ($result == FALSE)
-	        		throw new Exception(pg_last_error($webtop_db));
-			@$query = "INSERT INTO contacts_category (login,category,iddomain,id,color) values ('$login','$foldername','$iddomain',nextval('seq_contacts_category'),'#FFFFFF')";
-			$result = pg_query($webtop_db, $query);
-			if ($result == FALSE)
-	               		echo "Errore creazione contacts_category $foldername di $login\n";
-			$result = pg_query($webtop_db, "COMMIT;");
-	        	if ($result == FALSE)
-	        		throw new Exception(pg_last_error($webtop_db));
-		}
-foreach($tables as $table)
-{
-	if(DEBUG)	
-	  echo " ==== $user -> $table ===\n";
-	$query="SELECT c_content FROM $table WHERE c_deleted IS NULL ";
-	$res2 = mysql_query($query,$link);
-	while($row = mysql_fetch_row($res2)) {
+	$card = new Contact_Vcard_Parse();
+	$vcards = $card->fromFile($file2import);
+	foreach($vcards as $data) {
 		unset($arrayContact);
 		$TEL= array();
 		$ADR= array();
 		$EMAIL= array();
-                $sogocard=utf8_encode($row[0]); //converto in UTF8
-		$card = new Contact_Vcard_Parse();
-		$data = $card->fromText($sogocard);
-		$SeconN =  $data[0]['N'][0]['value'][0][0];
-		$FirstN =  $data[0]['N'][0]['value'][1][0];
+		$SeconN =  $data['N'][0]['value'][0][0];
+		$FirstN =  $data['N'][0]['value'][1][0];
 
-		$ORG =  $data[0]['ORG'][0]['value'][0][0];
-		$TITLE =  $data[0]['TITLE'][0]['value'][0][0];
-		$NOTE = str_replace("\\n", "\n", $data[0]['NOTE'][0]['value'][0][0]);
-		$url =  $data[0]['URL'][0]['value'][0][0];
+		$ORG =  $data['ORG'][0]['value'][0][0];
+		$TITLE =  $data['TITLE'][0]['value'][0][0];
+		$NOTE = str_replace("\\n", "\n", $data['NOTE'][0]['value'][0][0]);
+		$url =  $data['URL'][0]['value'][0][0];
 		
-		if(count($data[0]['TEL']))
-			foreach($data[0]['TEL'] as $tel)
+		if(count($data['TEL']))
+			foreach($data['TEL'] as $tel)
 			{
 				$TEL[strtolower($tel['param']['TYPE'][0])] =   $tel['value'][0][0];
 			}
-		if(count($data[0]['ADR']))
-			foreach($data[0]['ADR'] as $adr)
+		if(count($data['ADR']))
+			foreach($data['ADR'] as $adr)
 			{
 				$ADR[strtolower($adr['param']['TYPE'][0])]['street'] =   $adr['value'][2][0];
 				$ADR[strtolower($adr['param']['TYPE'][0])]['city'] =   $adr['value'][3][0];
@@ -116,8 +62,8 @@ foreach($tables as $table)
 				$ADR[strtolower($adr['param']['TYPE'][0])]['code'] =   $adr['value'][5][0];
 				$ADR[strtolower($adr['param']['TYPE'][0])]['country'] =   $adr['value'][6][0];
 			}
-		if(count($data[0]['EMAIL']))
-			foreach($data[0]['EMAIL'] as $em)
+		if(count($data['EMAIL']))
+			foreach($data['EMAIL'] as $em)
 				$EMAIL[strtolower($em['param']['TYPE'][0])] =   $em['value'][0][0];
 		
 		if ($EMAIL['internet'])
@@ -197,15 +143,17 @@ foreach($tables as $table)
             	if (isset($url)) {
                 	$arrayContact["url"] = truncateString($url, 200);
             	}
-            	if (isset($fnames[$table])) {
-                	$arrayContact["category"] = truncateString($fnames[$table], 50);
-            	}	
+//            	if (isset($fnames[$table])) {
+//                	$arrayContact["category"] = truncateString($fnames[$table], 50);
+//            	}	
+               	$arrayContact["category"] = "$foldername";
+
                 if (isset($NOTE)) {
                     $arrayContact["cnotes"] = truncateString($NOTE, 2000);
                     $arrayContact["hnotes"] = truncateString($NOTE, 2000);
                 }
 
-                $arrayContact["login"] = $users[$table];
+                $arrayContact["login"] = $user;
                 $arrayContact["iddomain"] = $iddomain;
                 $arrayContact["status"] = "N";
                 $id = getNextId($webtop_db,'SEQ_CONTACTS');
@@ -213,7 +161,8 @@ foreach($tables as $table)
 
                 $result = pg_insert($webtop_db, 'contacts', $arrayContact);
 		if ($result == FALSE)
-               		echo "Errore creazione Contatto $FirstN $SeconN $ORG di $users[$table] su $fnames[$table]\n";
+               		echo "Error Creating Contact: $FirstN $SeconN $ORG - $user on $foldername\n";
+		else $num_contacts++;
 
 		if(DEBUG)
 		{
@@ -227,19 +176,19 @@ foreach($tables as $table)
 			echo " TITLE = $TITLE\n";
 			echo " NOTE = $NOTE\n";
 			echo " url = $url\n";
-			echo " Folder = ".$fnames[$table]."\n";
-			echo " Login = ".$users[$table]."\n";
+			echo " Folder = $foldername\n";
+			echo " Login = ".$user."\n";
 		}
 
 	}
+        echo "Imported $num_contacts events on Calendar $foldername ($user)\n";
 
 
-}
 
 
 function help()
 {
-	echo "Export  SOGo phonebooks to system shared phonebook.\n\nUsage: sogo2nethtop_card.php <user> [name]\n\nWhere:\n\tuser: the phonebook owner, or 'all' for all users.\n\tname: the phonebook name. If no name is specified, the script will export all user's phonebooks.\n";
+	echo "\nUsage: pst2webtop_card.php <user> <filetoimport> <foldername (es WebTop)>\n\n";
 	exit(0);
 }
 
