@@ -41,7 +41,8 @@ event_templates($event,
                      '/var/lib/tomcat/webapps/webtop/WEB-INF/classes/logback.xml',
                      '/etc/dovecot/dovecot.conf',
                      '/usr/share/webtop/z-push/config.php',
-                     '/etc/httpd/conf/httpd.conf'
+                     '/etc/httpd/conf/httpd.conf',
+                     '/usr/share/webtop/updates/post/main/3372_0@webtop.sql'
 );
 event_services($event, 
                      'tomcat' => 'restart',
