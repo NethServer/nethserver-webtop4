@@ -1,0 +1,7 @@
+{
+    use NethServer::Password;
+    my $pwd = NethServer::Password::store('vmail') || die('Could not read vmail password!');
+
+    $OUT .= "DELETE FROM settings WHERE idsetting = 'nethtop.vmail.secret';\n";
+    $OUT .= "INSERT INTO settings VALUES ('nethtop.vmail.secret','$pwd',true);\n";
+}
