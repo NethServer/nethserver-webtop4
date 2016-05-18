@@ -88,6 +88,7 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 /usr/share/nethesis/NethServer/Module/Dashboard/Applications/WebTop.php
 /etc/backup-data.d/nethserver-webtop4.exclude
 %doc COPYING
+%doc README.rst
 
 %changelog
 * Mon Jan 25 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.2-1
