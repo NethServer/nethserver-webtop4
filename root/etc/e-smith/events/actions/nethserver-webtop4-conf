@@ -39,6 +39,3 @@ fi
 
 # Enable file upload/download
 setfacl -R -d -m postgres:rwx /var/lib/nethserver/webtop/tmp/
-
-perl -e "use NethServer::Directory qw(FIELDS_READ); my \$ldap = NethServer::Directory->new() || die('Could not connect LDAP server'); \$ldap->configServiceAccount('webtop', FIELDS_READ) || die('Error creating webtop LDAP service account');";
-
