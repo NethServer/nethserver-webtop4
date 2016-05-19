@@ -1,11 +1,20 @@
 import javax.crypto.*;
 import javax.crypto.spec.*;
 import sun.misc.*;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 
 public class WebtopPassEncode {
 
     public static void main(String args[]) throws Exception {
-        String c=cipher(args[0],"password");
+        String p;
+        try {
+            p = args[0];
+        } catch (ArrayIndexOutOfBoundsException e1) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            p = br.readLine();
+        } 
+        String c=cipher(p,"password");
         System.out.println(c);
     }
 
