@@ -14,10 +14,25 @@ chown $uid, $gid, $fh->filename;
 my $domain = $db->get('DomainName')->prop('type');
 print $fh "DELETE FROM domains;\n";
 
+my $encoded = '';
 my $secret=$sssd->bindPassword();
-chomp $secret;
-my $encoded=`cd /usr/share/webtop/;  CLASSPATH=\$CLASSPATH:. java WebtopPassEncode $secret`;
-chomp $encoded;
+
+# Some obsucre perl magic, thanks to Davidep
+pipe RH, WH;
+open(OLDIN, "<&STDIN");
+open(STDIN, "<&RH");
+if(open(PIPE, "-|")) {
+    close(RH);
+    print WH $secret;
+    close(WH);
+    $encoded = <PIPE>;
+    chomp($encoded);
+} else {
+    exec("java -classpath /usr/share/webtop/ WebtopPassEncode");
+}
+close(PIPE);
+close(RH);
+open(STDIN, "<&OLDIN");
 
 my $user=$sssd->bindUser();
 
