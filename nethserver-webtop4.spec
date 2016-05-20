@@ -1,6 +1,6 @@
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.1.2
+Version: 1.2.0
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -75,6 +75,9 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc README.rst
 
 %changelog
+* Fri May 20 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.0-1
+- WebTop: upgrade to upstream release 0405 and upgrade to upstream release z-push 2.2.8 - Enhancement #3372 [NethServer]
+
 * Mon Jan 25 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.1.2-1
 - WebTop: upgrade to upstream release 0352 - Enhancement #3338 [NethServer]
 - WebTop: Outlook PST import - Enhancement #3337 [NethServer]
