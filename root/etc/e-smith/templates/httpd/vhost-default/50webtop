@@ -22,6 +22,5 @@
 <Directory "/usr/share/webtop/z-push/">
     AllowOverride None
     Options None
-    Order allow,deny
-    Allow from all
+    Require all granted
 </Directory>
