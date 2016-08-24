@@ -62,10 +62,18 @@ if ($rows==0) {
 				$ADR[strtolower($adr['param']['TYPE'][0])]['code'] =   $adr['value'][5][0];
 				$ADR[strtolower($adr['param']['TYPE'][0])]['country'] =   $adr['value'][6][0];
 			}
-		if(count($data['EMAIL']))
-			foreach($data['EMAIL'] as $em)
-				$EMAIL[strtolower($em['param']['TYPE'][0])] =   $em['value'][0][0];
-		
+                $id_type_mail=0;
+                $EMAIL_TYPE=Array("work","home","other");
+                if(count($data['EMAIL']))
+                        foreach($data['EMAIL'] as $em) {
+                                if ($em['param']['TYPE'][0]=="") {
+                                        $EMAIL[$EMAIL_TYPE[$id_type_mail]] =   $em['value'][0][0];
+                                        $id_type_mail++;
+                                }
+                                else
+                                        $EMAIL[strtolower($em['param']['TYPE'][0])] =   $em['value'][0][0];
+                        }
+
 		if ($EMAIL['internet'])
 		{
 			$EMAIL['work']	= $EMAIL['internet'];
@@ -138,6 +146,9 @@ if ($rows==0) {
             	}
             	if (isset($EMAIL['home'])) {
                 	$arrayContact["hemail"] = truncateString($EMAIL['home'], 80);
+            	}
+            	if (isset($EMAIL['other'])) {
+                	$arrayContact["oemail"] = truncateString($EMAIL['other'], 80);
             	}
             	$arrayContact["revision"] = "NOW()";
             	if (isset($url)) {
