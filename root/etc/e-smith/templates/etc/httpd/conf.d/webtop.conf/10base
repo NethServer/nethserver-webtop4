@@ -13,8 +13,7 @@
     ProxyPassReverse http://127.0.0.1:{$WebTopPort}/webtop
 </Location>
 
-RewriteEngine on
-RewriteRule ^/webtop(/.*|\$) https://%\{SERVER_NAME\}/webtop$1 [R,L]
+# mod_rewrite configuration was moved to httpd/vhost-default template (#5088)
 
 # webtop ActiveSync is {$webtop{'ActiveSync'}}
 {
