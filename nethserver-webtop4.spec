@@ -44,6 +44,7 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 
 %files
 %defattr(-,root,root)
+%config %ghost %attr (0644,root,root) %{_sysconfdir}/httpd/conf.d/webtop.conf
 %attr(755, tomcat, tomcat) /var/lib/nethserver/webtop
 %attr(755, postgres, postgres) /var/lib/nethserver/webtop/backup
 %attr(777, tomcat, tomcat) /var/lib/nethserver/webtop/tmp
@@ -59,12 +60,13 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 /etc/e-smith/events/post-restore-data/S50nethserver-webtop4-restore
 /etc/e-smith/events/post-restore-data/services2adjust/tomcat
 /etc/e-smith/events/pre-backup-data/S50nethserver-webtop4-backup
-/etc/e-smith/templates/httpd/vhost-default/50webtop
+/etc/e-smith/templates/etc/httpd/conf.d/webtop.conf/10base
 /etc/e-smith/templates/var/lib/tomcat/webapps/webtop
 /etc/e-smith/templates/etc/dovecot/dovecot.conf/90webtop
 /etc/e-smith/templates/var/lib/pgsql/data/pg_hba.conf/10webtop
 /etc/e-smith/templates/usr/share/webtop/z-push
 /etc/e-smith/templates/usr/share/webtop/updates/post/main/3372_0@webtop.sql
+/etc/e-smith/templates/httpd/vhost-default/20webtop4
 /etc/e-smith/db/configuration/defaults/webtop
 /usr/share/tomcat/lib/postgresql-jdbc.jar
 /etc/sudoers.d/webtop

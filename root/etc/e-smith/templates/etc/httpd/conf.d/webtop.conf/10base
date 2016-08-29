@@ -1,0 +1,33 @@
+#
+# 10base -- WebTop configuration
+#
+
+<Location /webtop>
+    Require ssl {
+        my $ports = $tomcat{'TCPPorts'} || '8080';
+        my @ports = split(/,/,$ports);
+        $WebTopPort = $ports[0];
+        $OUT = '';
+    }
+    ProxyPass http://127.0.0.1:{$WebTopPort}/webtop
+    ProxyPassReverse http://127.0.0.1:{$WebTopPort}/webtop
+</Location>
+
+# mod_rewrite configuration was moved to httpd/vhost-default template (#5088)
+
+# webtop ActiveSync is {$webtop{'ActiveSync'}}
+{
+    if (($webtop{'ActiveSync'} || '') eq 'enabled') {
+        $OUT = 'Alias /Microsoft-Server-ActiveSync /usr/share/webtop/z-push/index.php';
+    } else {
+        $OUT = '';
+    }
+}
+
+<Directory "/usr/share/webtop/z-push/">
+    AllowOverride None
+    Options None
+    Require all granted
+</Directory>
+
+
