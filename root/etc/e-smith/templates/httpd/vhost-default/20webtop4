@@ -1,7 +1,0 @@
-#
-# 20webtop4
-#
-RewriteEngine on
-RewriteRule ^/webtop(/.*|\$) https://%\{SERVER_NAME\}/webtop$1 [R,L]
-
-

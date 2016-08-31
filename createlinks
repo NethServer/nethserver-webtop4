@@ -42,6 +42,7 @@ event_templates($event,
                      '/etc/dovecot/dovecot.conf',
                      '/usr/share/webtop/z-push/config.php',
                      '/etc/httpd/conf.d/webtop.conf',
+                     '/etc/httpd/conf.d/default-virtualhost.inc',
                      '/usr/share/webtop/updates/post/main/3372_0@webtop.sql'
 );
 event_services($event, 
