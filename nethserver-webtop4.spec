@@ -66,7 +66,7 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 /etc/e-smith/templates/var/lib/pgsql/data/pg_hba.conf/10webtop
 /etc/e-smith/templates/usr/share/webtop/z-push
 /etc/e-smith/templates/usr/share/webtop/updates/post/main/3372_0@webtop.sql
-/etc/e-smith/templates/httpd/vhost-default/20webtop4
+/etc/e-smith/templates/etc/httpd/conf.d/default-virtualhost.inc/20webtop4
 /etc/e-smith/db/configuration/defaults/webtop
 /usr/share/tomcat/lib/postgresql-jdbc.jar
 /etc/sudoers.d/webtop
