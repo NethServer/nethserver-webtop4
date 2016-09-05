@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 
-require File::Temp;
 use esmith::ConfigDB;
-use File::Temp();
+use File::Temp;
+use NethServer::Password;
 
 my $db = esmith::ConfigDB->open_ro() or die "Could not open config db";
 
@@ -10,21 +10,52 @@ $fh = File::Temp->new();
 my ($login,$pass,$uid,$gid) = getpwnam('postgres') or die "postgres not in passwd file";
 chown $uid, $gid, $fh->filename;
 my $domain = $db->get('DomainName')->prop('type');
-print $fh "DELETE FROM domains;\n";
+my $secret = NethServer::Password::store('webtop');
 
-my $secret=`cat /var/lib/nethserver/secrets/webtop`;
-chomp $secret;
 my $encoded=`cd /usr/share/webtop/;  CLASSPATH=\$CLASSPATH:. java WebtopPassEncode $secret`;
 chomp $encoded;
 
-my $order = 1;
-my $query="INSERT INTO domains (iddomain, description, domain, authuri, \"order\", enabled, adminldap, passwordldap, case_sensitive_auth, user_auto_creation, wt_adv_security) VALUES ('NethServer','$domain','$domain','ldapWebTop://localhost:389/','$order','T','webtop','$encoded','f','t','f');\n";
-print $fh $query;
+print $fh qq(
+    UPDATE domains SET
+            domain = '$domain',
+            passwordldap = '$encoded'
+        WHERE iddomain = 'NethServer'
+    ;
+
+    INSERT INTO domains (
+            iddomain,
+            description,
+            domain,
+            authuri,
+            "order",
+            enabled,
+            adminldap,
+            passwordldap,
+            case_sensitive_auth,
+            user_auto_creation,
+            wt_adv_security
+        ) SELECT
+            'NethServer',
+            '$domain',
+            '$domain',
+            'ldapWebTop://localhost:389/',
+            '1',
+            'T',
+            'webtop',
+            '$encoded',
+            'f',
+            't',
+            'f'
+        WHERE NOT EXISTS (SELECT 1 FROM domains WHERE iddomain = 'NethServer')
+    ;
+);
 
 my $public_url = $db->get_prop('webtop','PublicUrl') || 'http://'.$db->get('SystemName')->prop('type').'.'.$domain.'/webtop';
 
 print $fh "UPDATE settings SET value='$public_url' where idsetting='calendar.pub.url';\n";
 print $fh "UPDATE settings SET value='$public_url' where idsetting='vfs.pub.url';\n";
+
+$fh->flush();
  
 system("su - postgres  -c 'psql webtop < ".$fh->filename."' >/dev/null");
 
