@@ -16,12 +16,6 @@ my $encoded=`cd /usr/share/webtop/;  CLASSPATH=\$CLASSPATH:. java WebtopPassEnco
 chomp $encoded;
 
 print $fh qq(
-    UPDATE domains SET
-            domain = '$domain',
-            passwordldap = '$encoded'
-        WHERE iddomain = 'NethServer'
-    ;
-
     INSERT INTO domains (
             iddomain,
             description,
