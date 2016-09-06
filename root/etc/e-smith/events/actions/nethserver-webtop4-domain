@@ -1,8 +1,27 @@
 #!/usr/bin/perl
 
-require File::Temp;
+#
+# Copyright (C) 2016 Nethesis S.r.l.
+# http://www.nethesis.it - nethserver@nethesis.it
+#
+# This script is part of NethServer.
+#
+# NethServer is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License,
+# or any later version.
+#
+# NethServer is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NethServer.  If not, see COPYING.
+#
+
 use esmith::ConfigDB;
-use File::Temp();
+use File::Temp;
 use NethServer::SSSD;
 my $sssd = new NethServer::SSSD();
 
@@ -12,7 +31,6 @@ $fh = File::Temp->new();
 my ($login,$pass,$uid,$gid) = getpwnam('postgres') or die "postgres not in passwd file";
 chown $uid, $gid, $fh->filename;
 my $domain = $db->get('DomainName')->prop('type');
-print $fh "DELETE FROM domains;\n";
 
 my $encoded = '';
 my $secret=$sssd->bindPassword();
@@ -44,14 +62,41 @@ elsif($sssd->isAD){
     $uri =~ s/^ldap:\/\//ldapAD:\/\//;
 }
 
-my $order = 1;
-my $query="INSERT INTO domains (iddomain, description, domain, authuri, \"order\", enabled, adminldap, passwordldap, case_sensitive_auth, user_auto_creation, wt_adv_security) VALUES ('NethServer','$domain','$domain','$uri','$order','T','$user','$encoded','f','t','f');\n";
-print $fh $query;
+print $fh qq(
+    INSERT INTO domains (
+            iddomain,
+            description,
+            domain,
+            authuri,
+            "order",
+            enabled,
+            adminldap,
+            passwordldap,
+            case_sensitive_auth,
+            user_auto_creation,
+            wt_adv_security
+        ) SELECT
+            'NethServer',
+            '$domain',
+            '$domain',
+            '$uri',
+            '1',
+            'T',
+            'webtop',
+            '$encoded',
+            'f',
+            't',
+            'f'
+        WHERE NOT EXISTS (SELECT 1 FROM domains WHERE iddomain = 'NethServer')
+    ;
+);
 
 my $public_url = $db->get_prop('webtop','PublicUrl') || 'http://'.$db->get('SystemName')->prop('type').'.'.$domain.'/webtop';
 
 print $fh "UPDATE settings SET value='$public_url' where idsetting='calendar.pub.url';\n";
 print $fh "UPDATE settings SET value='$public_url' where idsetting='vfs.pub.url';\n";
- 
+
+$fh->flush();
+
 system("su - postgres  -c 'psql webtop < ".$fh->filename."' >/dev/null");
 
