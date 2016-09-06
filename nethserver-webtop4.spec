@@ -1,6 +1,6 @@
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.2.1
+Version: 1.2.2
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -74,6 +74,9 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc COPYING
 
 %changelog
+* Tue Sep 06 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.2-1
+- Webtop: Active Directory configuration lost - Bug #3421 [NethServer 6]
+
 * Thu Aug 25 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.1-1
 - Import contacts from Outlook 2016 - Enhancement #3419
 
