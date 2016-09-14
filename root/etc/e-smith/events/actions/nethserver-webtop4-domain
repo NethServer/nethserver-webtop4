@@ -31,6 +31,7 @@ $fh = File::Temp->new();
 my ($login,$pass,$uid,$gid) = getpwnam('postgres') or die "postgres not in passwd file";
 chown $uid, $gid, $fh->filename;
 my $domain = $db->get('DomainName')->prop('type');
+print $fh "DELETE FROM domains;\n";
 
 my $encoded = '';
 my $secret=$sssd->bindPassword();
@@ -62,34 +63,10 @@ elsif($sssd->isAD){
     $uri =~ s/^ldap:\/\//ldapAD:\/\//;
 }
 
-print $fh qq(
-    INSERT INTO domains (
-            iddomain,
-            description,
-            domain,
-            authuri,
-            "order",
-            enabled,
-            adminldap,
-            passwordldap,
-            case_sensitive_auth,
-            user_auto_creation,
-            wt_adv_security
-        ) SELECT
-            'NethServer',
-            '$domain',
-            '$domain',
-            '$uri',
-            '1',
-            'T',
-            'webtop',
-            '$encoded',
-            'f',
-            't',
-            'f'
-        WHERE NOT EXISTS (SELECT 1 FROM domains WHERE iddomain = 'NethServer')
-    ;
-);
+my $order = 1;
+my $query="INSERT INTO domains (iddomain, description, domain, authuri, \"order\", enabled, adminldap, passwordldap, case_sensitive_auth, user_auto_creation,
+ wt_adv_security) VALUES ('NethServer','$domain','$domain','$uri','$order','T','$user','$encoded','f','t','f');\n";
+print $fh $query;
 
 my $public_url = $db->get_prop('webtop','PublicUrl') || 'http://'.$db->get('SystemName')->prop('type').'.'.$domain.'/webtop';
 
