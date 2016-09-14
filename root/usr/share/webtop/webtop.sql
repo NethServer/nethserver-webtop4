@@ -2816,7 +2816,7 @@ INSERT INTO users VALUES ('admin', 'admin', 'Administrator', '', NULL, NULL, 'EN
 insert into service_settings (iddomain,service,login,idsetting,value) values ('NethServer','mail','admin','pagerows',100);
 
 
-CREATE LANGUAGE plpgsql;
+CREATE OR REPLACE LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION _WEBTOP_DELETEUSER (_tbl VARCHAR, _key VARCHAR, _value VARCHAR) RETURNS void AS $$
 DECLARE
