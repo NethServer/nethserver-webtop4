@@ -1,6 +1,6 @@
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.3.3
+Version: 1.3.4
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -77,6 +77,9 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc README.rst
 
 %changelog
+* Wed Sep 14 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.4-1
+- Fix domain configuration and avoid errors during db creation. PR #6
+
 * Tue Sep 06 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.3-1
 - Webtop: Active Directory configuration lost - Bug #3421 [NethServer 6]
 
