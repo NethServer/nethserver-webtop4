@@ -144,20 +144,20 @@ foreach($tables as $table)
             	if (isset($ORG)) {
                 	$arrayContact["company"] = truncateString($ORG, 60);
             	}
-            	if (isset($ADDR['work']['street'])) {
-                	$arrayContact["caddress"] = truncateString($ADDR['work']['street'], 100);
+            	if (isset($ADR['work']['street'])) {
+                	$arrayContact["caddress"] = truncateString($ADR['work']['street'], 100);
             	}
-            	if (isset($ADDR['work']['city'])) {
+            	if (isset($ADR['work']['city'])) {
                 	$arrayContact["ccity"] = truncateString($ADR['work']['city'], 30);
             	}
             	if (isset($ADR['work']['prov'])) {
-                	$arrayContact["ccountry"] = truncateString($ADR['work']['prov'], 30);
+                	$arrayContact["cstate"] = truncateString($ADR['work']['prov'], 30);
             	}
             	if (isset($ADR['work']['code'])) {
                 	$arrayContact["cpostalcode"] = truncateString($ADR['work']['code'], 20);
             	}
             	if (isset($ADR['work']['country'])) {
-                	$arrayContact["cstate"] =truncateString($ADR['work']['country'], 30);
+                	$arrayContact["ccountry"] =truncateString($ADR['work']['country'], 30);
             	}
             	if (isset($TEL['work'])) {
                 	$arrayContact["ctelephone"] = truncateString($TEL['work'], 50);
@@ -175,13 +175,13 @@ foreach($tables as $table)
                 	$arrayContact["hcity"] = truncateString($ADR['home']['city'], 30);
             	}
             	if (isset($ADR['home']['prov'])) {
-                	$arrayContact["hcountry"] = truncateString($ADR['home']['prov'], 30);
+                	$arrayContact["hstate"] = truncateString($ADR['home']['prov'], 30);
             	}
             	if (isset($ADR['home']['code'])) {
                 	$arrayContact["hpostalcode"] = truncateString($ADR['home']['code'], 20);
             	}
             	if (isset($ADR['home']['country'])) {
-                	$arrayContact["hstate"] = truncateString($ADR['home']['country'], 30);
+                	$arrayContact["hcountry"] = truncateString($ADR['home']['country'], 30);
             	}
             	if (isset($TEL['home'])) {
                 	$arrayContact["htelephone"] = truncateString($TEL['home'], 50);
