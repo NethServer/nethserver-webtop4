@@ -1,6 +1,6 @@
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.3.4
+Version: 1.3.5
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -77,6 +77,9 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc README.rst
 
 %changelog
+* Mon Oct 17 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.5-1
+- Webtop 4: missing fields during import from SOGo - NethServer/dev#5125
+
 * Wed Sep 14 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.4-1
 - Fix domain configuration and avoid errors during db creation. PR #6
 
