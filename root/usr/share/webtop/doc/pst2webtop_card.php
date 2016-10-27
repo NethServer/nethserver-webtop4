@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 /**
-	This script extracts contacts from sogo and add them to webtop.
+	This script extracts contacts from PST and add them to webtop.
 **/
 define("DEBUG",false);
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
@@ -29,7 +29,7 @@ $pgtest = pg_query($webtop_db, "SELECT * from contacts_category where login='$us
 $rows = pg_num_rows($pgtest);
 
 if ($rows==0) {
-	$query = "INSERT INTO contacts_category (login,category,iddomain,id,color) values ('$user','$foldername','$iddomain',nextval('seq_contacts_category'),'#FFFFFF')";
+	$query = "INSERT INTO contacts_category (login,category,description,iddomain,id,color) values ('$user','$foldername','Import from PST','$iddomain',nextval('seq_contacts_category'),'#FFFFFF')";
 	$result = pg_query($webtop_db, $query);
 }
 
@@ -192,7 +192,7 @@ if ($rows==0) {
 		}
 
 	}
-        echo "Imported $num_contacts events on Calendar $foldername ($user)\n";
+        echo "Imported $num_contacts contacts on Address Book $foldername ($user)\n";
 
 
 
