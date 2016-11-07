@@ -1,6 +1,6 @@
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.3.5
+Version: 1.3.6
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -77,6 +77,9 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc README.rst
 
 %changelog
+* Mon Nov 07 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.6-1
+- pst2webtop: missing "description" field in contacts category - Bug NethServer/dev#5140
+
 * Mon Oct 17 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.5-1
 - Webtop 4: missing fields during import from SOGo - NethServer/dev#5125
 
