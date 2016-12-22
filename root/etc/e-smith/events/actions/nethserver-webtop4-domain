@@ -53,19 +53,29 @@ close(PIPE);
 close(RH);
 open(STDIN, "<&OLDIN");
 
-my $user=$sssd->bindUser();
-
+my $user = $sssd->bindDN();
 my $uri = $sssd->ldapURI();
-if ($sssd->isLdap){
-    $uri =~ s/^ldap:\/\//ldapWebTop:\/\//;
+my $port = "389";
+my $ssl = "null";
+
+if ( $uri =~ /^ldaps/ ) {
+    $ssl = "SSL";
+    $port = "636";
 }
-elsif($sssd->isAD){
-    $uri =~ s/^ldap:\/\//ldapAD:\/\//;
+if ( $sssd->startTls() ) {
+    $ssl = "STARTTLS";
 }
+
+if ($sssd->isLdap()){
+    $uri = "ldapWebTop://";
+} elsif($sssd->isAD()){
+    $uri = "ldapAD://";
+}
+$uri .= $sssd->host() . ":" . $port;
 
 my $order = 1;
 my $query="INSERT INTO domains (iddomain, description, domain, authuri, \"order\", enabled, adminldap, passwordldap, case_sensitive_auth, user_auto_creation,
- wt_adv_security) VALUES ('NethServer','$domain','$domain','$uri','$order','T','$user','$encoded','f','t','f');\n";
+ wt_adv_security, auth_connection_security, adminldap_as_full_dn) VALUES ('NethServer','$domain','$domain','$uri','$order','T','$user','$encoded','f','t','f','$ssl','t');\n";
 print $fh $query;
 
 my $public_url = $db->get_prop('webtop','PublicUrl') || 'http://'.$db->get('SystemName')->prop('type').'.'.$domain.'/webtop';
