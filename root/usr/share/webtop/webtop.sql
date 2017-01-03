@@ -408,7 +408,10 @@ CREATE TABLE domains (
     passwordldap character varying(100),
     case_sensitive_auth boolean DEFAULT false NOT NULL,
     user_auto_creation boolean DEFAULT false NOT NULL,
-    wt_adv_security boolean DEFAULT false NOT NULL
+    wt_adv_security boolean DEFAULT false NOT NULL,
+    users_management boolean DEFAULT true NOT NULL,
+    auth_connection_security character varying(10),
+    adminldap_as_full_dn boolean DEFAULT false NOT NULL
 );
 
 
