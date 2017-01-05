@@ -22,8 +22,6 @@
 
 use esmith::ConfigDB;
 use File::Temp;
-use NethServer::SSSD;
-my $sssd = new NethServer::SSSD();
 
 my $db = esmith::ConfigDB->open_ro() or die "Could not open config db";
 
@@ -32,51 +30,6 @@ my ($login,$pass,$uid,$gid) = getpwnam('postgres') or die "postgres not in passw
 chown $uid, $gid, $fh->filename;
 my $domain = $db->get('DomainName')->prop('type');
 print $fh "DELETE FROM domains;\n";
-
-my $encoded = '';
-my $secret=$sssd->bindPassword();
-
-# Some obsucre perl magic, thanks to Davidep
-pipe RH, WH;
-open(OLDIN, "<&STDIN");
-open(STDIN, "<&RH");
-if(open(PIPE, "-|")) {
-    close(RH);
-    print WH $secret;
-    close(WH);
-    $encoded = <PIPE>;
-    chomp($encoded);
-} else {
-    exec("java -classpath /usr/share/webtop/ WebtopPassEncode");
-}
-close(PIPE);
-close(RH);
-open(STDIN, "<&OLDIN");
-
-my $user = $sssd->bindDN();
-my $uri = $sssd->ldapURI();
-my $port = "389";
-my $ssl = "null";
-
-if ( $uri =~ /^ldaps/ ) {
-    $ssl = "SSL";
-    $port = "636";
-}
-if ( $sssd->startTls() ) {
-    $ssl = "STARTTLS";
-}
-
-if ($sssd->isLdap()){
-    $uri = "ldapWebTop://";
-} elsif($sssd->isAD()){
-    $uri = "ldapAD://";
-}
-$uri .= $sssd->host() . ":" . $port;
-
-my $order = 1;
-my $query="INSERT INTO domains (iddomain, description, domain, authuri, \"order\", enabled, adminldap, passwordldap, case_sensitive_auth, user_auto_creation,
- wt_adv_security, auth_connection_security, adminldap_as_full_dn) VALUES ('NethServer','$domain','$domain','$uri','$order','T','$user','$encoded','f','t','f','$ssl','t');\n";
-print $fh $query;
 
 my $public_url = $db->get_prop('webtop','PublicUrl') || 'http://'.$db->get('SystemName')->prop('type').'.'.$domain.'/webtop';
 
