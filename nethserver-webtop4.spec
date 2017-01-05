@@ -37,42 +37,21 @@ rm -f root/usr/share/webtop/WebtopPassEncode.java
 rm -rf %{buildroot}
 (cd root; find . -depth -print | cpio -dump %{buildroot})
 ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/postgresql-jdbc.jar
+%{genfilelist} %{buildroot} \
+  --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' \
+  --dir /var/lib/nethserver/webtop 'attr(755, tomcat, tomcat)' \
+  --dir /var/lib/nethserver/webtop/backup 'attr(755, postgres, postgres)' \
+  --dir /var/lib/nethserver/webtop/tmp 'attr(777, tomcat, tomcat)' \
+  > %{name}-%{version}-filelist
 
 %post
 
 %preun
 
-%files
+%files -f %{name}-%{version}-filelist
 %defattr(-,root,root)
 %config %ghost %attr (0644,root,root) %{_sysconfdir}/httpd/conf.d/webtop.conf
-%attr(755, tomcat, tomcat) /var/lib/nethserver/webtop
-%attr(755, postgres, postgres) /var/lib/nethserver/webtop/backup
-%attr(777, tomcat, tomcat) /var/lib/nethserver/webtop/tmp
 %dir %{_nseventsdir}/%{name}-update
-/usr/share/webtop
-/etc/e-smith/events/nethserver-webtop4-update
-/etc/e-smith/events/actions/nethserver-webtop4-conf
-/etc/e-smith/events/actions/nethserver-webtop4-domain
-/etc/e-smith/events/actions/nethserver-webtop4-backup
-/etc/e-smith/events/actions/nethserver-webtop4-restore
-/etc/e-smith/events/actions/nethserver-webtop4-delete
-/etc/e-smith/events/user-delete/S70nethserver-webtop4-delete
-/etc/e-smith/events/post-restore-data/S50nethserver-webtop4-restore
-/etc/e-smith/events/post-restore-data/services2adjust/tomcat
-/etc/e-smith/events/pre-backup-data/S50nethserver-webtop4-backup
-/etc/e-smith/templates/etc/httpd/conf.d/webtop.conf/10base
-/etc/e-smith/templates/var/lib/tomcat/webapps/webtop
-/etc/e-smith/templates/etc/dovecot/dovecot.conf/90webtop
-/etc/e-smith/templates/var/lib/pgsql/data/pg_hba.conf/10webtop
-/etc/e-smith/templates/usr/share/webtop/z-push
-/etc/e-smith/templates/usr/share/webtop/updates/post/main/3372_0@webtop.sql
-/etc/e-smith/templates/etc/httpd/conf.d/default-virtualhost.inc/20webtop4
-/etc/e-smith/db/configuration/defaults/webtop
-/usr/share/tomcat/lib/postgresql-jdbc.jar
-/etc/sudoers.d/webtop
-/etc/nethserver/todos.d/70webtop
-/usr/share/nethesis/NethServer/Module/Dashboard/Applications/WebTop.php
-/etc/backup-data.d/nethserver-webtop4.exclude
 %doc COPYING
 %doc README.rst
 
