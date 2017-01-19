@@ -12,7 +12,7 @@ AutoReq: no
 Requires: nethserver-mail-server, nethserver-postgresql, nethserver-tomcat, nethserver-httpd
 Requires: php-process, php-pgsql, php-imap, php-ldap, postgresql-jdbc
 Requires: perl-libintl, perl-DBD-Pg
-Requires: webtop4-core, webtop4-zpush
+Requires: webtop4-core >= 1.2.1-1, webtop4-zpush >= 1.2.1-1
 
 BuildRequires: perl, java-1.7.0-openjdk-devel
 BuildRequires: nethserver-devtools 
