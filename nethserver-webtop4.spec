@@ -1,6 +1,6 @@
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.2.4
+Version: 1.2.5
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -74,6 +74,9 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc COPYING
 
 %changelog
+* Tue Jan 24 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.5-1
+- Webtop4: upgrade to upstream release 0456 - Enhancement #3436
+
 * Mon Nov 07 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.4-1
 - pst2webtop: missing "description" field in contacts category NethServer/dev#5140
 
