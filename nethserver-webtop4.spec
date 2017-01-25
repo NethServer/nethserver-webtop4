@@ -36,7 +36,6 @@ rm -f root/usr/share/webtop/WebtopPassEncode.java
 %install
 rm -rf %{buildroot}
 (cd root; find . -depth -print | cpio -dump %{buildroot})
-ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/postgresql-jdbc.jar
 %{genfilelist} %{buildroot} \
   --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' \
   --dir /var/lib/nethserver/webtop 'attr(755, tomcat, tomcat)' \
