@@ -11,7 +11,7 @@ BuildArch: noarch
 Requires: nethserver-mail-server, nethserver-postgresql, nethserver-tomcat, nethserver-httpd
 Requires: php-process, php-pgsql, php-imap, php-ldap, postgresql-jdbc
 Requires: perl-libintl, perl-DBD-Pg
-Requires: webtop4-core, webtop4-zpush
+Requires: webtop4-core >= 1.2.2-1, webtop4-zpush >= 1.2.1-1
 
 BuildRequires: perl, java-1.7.0-openjdk-devel
 BuildRequires: nethserver-devtools 
@@ -25,7 +25,6 @@ NethServer webtop configuration
 %build
 %{makedocs}
 perl createlinks
-mkdir -p root/usr/share/tomcat/lib
 mkdir -p root/var/lib/nethserver/webtop/backup
 mkdir -p root/var/lib/nethserver/webtop/public/main/images
 mkdir -p root/usr/share/webtop/bin/
