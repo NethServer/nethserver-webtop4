@@ -1,6 +1,6 @@
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.3.6
+Version: 1.3.7
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -63,6 +63,10 @@ rm -rf %{buildroot}
 %doc README.rst
 
 %changelog
+* Mon Jan 30 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.7-1
+- WebTop4: enable LDAPs protocol - NethServer/dev#5180
+- Multiple bug fixes
+
 * Mon Nov 07 2016 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.6-1
 - pst2webtop: missing "description" field in contacts category - Bug NethServer/dev#5140
 
