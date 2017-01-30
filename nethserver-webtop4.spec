@@ -36,11 +36,17 @@ rm -f root/usr/share/webtop/WebtopPassEncode.java
 rm -rf %{buildroot}
 (cd root; find . -depth -print | cpio -dump %{buildroot})
 %{genfilelist} %{buildroot} \
-  --dir /var/lib/nethserver/nextcloud 'attr(0755,apache,apache)' \
   --dir /var/lib/nethserver/webtop 'attr(755, tomcat, tomcat)' \
   --dir /var/lib/nethserver/webtop/backup 'attr(755, postgres, postgres)' \
-  --dir /var/lib/nethserver/webtop/tmp 'attr(777, tomcat, tomcat)' \
-  > %{name}-%{version}-filelist
+  --dir /var/lib/nethserver/webtop/tmp 'attr(-, tomcat, tomcat)' \
+  --dir /var/lib/nethserver/webtop/images 'attr(-, tomcat, tomcat)' \
+  --dir /var/lib/nethserver/webtop/models 'attr(-, tomcat, tomcat)' \
+  --dir /var/lib/nethserver/webtop/mydocuments 'attr(-, tomcat, tomcat)' \
+  --dir /var/lib/nethserver/webtop/logs 'attr(-, tomcat, tomcat)' \
+  --dir /var/lib/nethserver/webtop/public 'attr(-, tomcat, tomcat)' \
+  --dir /var/lib/nethserver/webtop/public/tmp 'attr(-, tomcat, tomcat)' \
+  --dir /var/lib/nethserver/webtop/public/main/images 'attr(-, tomcat, tomcat)' \
+ > %{name}-%{version}-filelist
 
 %post
 
@@ -50,6 +56,9 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %config %ghost %attr (0644,root,root) %{_sysconfdir}/httpd/conf.d/webtop.conf
 %dir %{_nseventsdir}/%{name}-update
+%attr(-, tomcat, tomcat) /var/lib/nethserver/webtop/public/*
+%attr(-, tomcat, tomcat) /var/lib/nethserver/webtop/models/*
+%attr(-, tomcat, tomcat) /var/lib/nethserver/webtop/images/*
 %doc COPYING
 %doc README.rst
 
