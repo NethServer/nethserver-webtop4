@@ -55,6 +55,7 @@ $uri .= $sssd->host() . ":" . $port;
 
 my $order = 1;
 
+$OUT .= "DELETE from domains where iddomain = 'NethServer';\n";
 $OUT .= "INSERT INTO domains (iddomain, description, domain, authuri, \"order\", enabled, adminldap, passwordldap, case_sensitive_auth, user_auto_creation,
  wt_adv_security, auth_connection_security, adminldap_as_full_dn) VALUES ('NethServer','$domain','$domain','$uri','$order','T','$user','$encoded','f','t','f','$ssl','t');\n";
 
