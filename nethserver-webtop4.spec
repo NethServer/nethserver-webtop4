@@ -1,6 +1,6 @@
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.3.7
+Version: 1.3.8
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -63,6 +63,9 @@ rm -rf %{buildroot}
 %doc README.rst
 
 %changelog
+* Fri Mar 03 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.8-1
+- WebTop 4 goes in maintenance mode - Bug NethServer/dev#5231
+
 * Mon Jan 30 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.3.7-1
 - WebTop4: enable LDAPs protocol - NethServer/dev#5180
 - Multiple bug fixes
