@@ -1,6 +1,6 @@
 Summary: NethServer webtop configuration
 Name: nethserver-webtop4
-Version: 1.2.5
+Version: 1.2.6
 Release: 1%{?dist}
 License: GPL
 URL: %{url_prefix}/%{name} 
@@ -74,6 +74,9 @@ ln -sf /usr/share/java/postgresql-jdbc.jar $RPM_BUILD_ROOT/usr/share/tomcat/lib/
 %doc COPYING
 
 %changelog
+* Wed Mar 06 2019 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.6-1
+- Fix SQL injection on wtusername login variable
+
 * Tue Jan 24 2017 Giacomo Sanchietti <giacomo.sanchietti@nethesis.it> - 1.2.5-1
 - Webtop4: upgrade to upstream release 0456 - Enhancement #3436
 
